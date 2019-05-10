@@ -1,28 +1,27 @@
 <script>
   import Todo from "./Todo.svelte";
-
-  export let todos = [];
+  import { todos } from "./store.js";
 
   let newTodo = "";
   let showCompleted = true;
 
-  $: filteredTodos = todos.filter(t =>
+  $: filteredTodos = $todos.filter(t =>
     showCompleted === true ? true : t.completed === false
   );
 
   function addTodo(e) {
     if (newTodo) {
-      todos = [...todos, { id: uuidv4(), name: newTodo, completed: false }];
+      $todos = [...$todos, { id: uuidv4(), name: newTodo, completed: false }];
       newTodo = "";
     }
   }
 
   function deleteTodo(e) {
-    todos = todos.filter(t => t !== e.detail);
+    $todos = $todos.filter(t => t !== e.detail);
   }
 
   function updateTodo(todo, detail) {
-    todos = todos.map(t => (t === todo ? { ...t, ...detail } : t));
+    $todos = $todos.map(t => (t === todo ? { ...t, ...detail } : t));
   }
 </script>
 
@@ -41,5 +40,5 @@
       <Todo {todo} on:change={e => updateTodo(todo, e.detail)} on:delete={deleteTodo} />
     {/each}
   </ul>
-  <pre> {JSON.stringify(todos, null, 2)} </pre>
+  <pre> {JSON.stringify($todos, null, 2)} </pre>
 </main>
